@@ -234,15 +234,26 @@ def random_event():
         "Une tempête détruit une partie de votre abri.",
         "Un animal sauvage attaque votre camp.",
         "Vous découvrez un ancien bunker rempli de provisions.",
+        "Vous êtes pris dans un glissement de terrain.",
+        "Un incendie se déclare près de votre abri.",
     ]
     rare_events = [
         "Vous trouvez un véhicule fonctionnel, mais il nécessite du carburant.",
         "Un groupe de survivants amicaux vous invite à rejoindre leur camp.",
         "Vous découvrez un trésor caché contenant des ressources précieuses.",
+        "Un scientifique fou vous propose une potion mystérieuse.",
+    ]
+    very_rare_events = [
+        "Vous trouvez une base militaire abandonnée avec des équipements avancés.",
+        "Un hélicoptère survole la zone, mais ne vous remarque pas.",
+        "Vous découvrez un laboratoire secret contenant des technologies anciennes.",
     ]
 
-    # Probabilité d'événements rares (10%)
-    if random.random() < 0.1:
+    # Probabilités : 5% très rare, 10% rare, 85% commun
+    roll = random.random()
+    if roll < 0.05:
+        event = random.choice(very_rare_events)
+    elif roll < 0.15:
         event = random.choice(rare_events)
     else:
         event = random.choice(events)
@@ -285,6 +296,16 @@ def random_event():
         resources["food"] += food_found
         resources["water"] += water_found
         narrate(f"Le bunker contient :\n- {wood_found} bois\n- {food_found} nourriture\n- {water_found} eau.")
+    elif event == "Vous êtes pris dans un glissement de terrain.":
+        health_loss = random.randint(10, 20)
+        resources_lost = random.randint(2, 5)
+        health -= health_loss
+        resources["wood"] = max(0, resources["wood"] - resources_lost)
+        narrate(f"Le glissement de terrain vous blesse (-{health_loss} santé) et emporte {resources_lost} bois.")
+    elif event == "Un incendie se déclare près de votre abri.":
+        resources_lost = random.randint(5, 10)
+        resources["wood"] = max(0, resources["wood"] - resources_lost)
+        narrate(f"L'incendie détruit {resources_lost} bois de votre abri.")
     elif event == "Vous trouvez un véhicule fonctionnel, mais il nécessite du carburant.":
         narrate("Vous trouvez un véhicule fonctionnel, mais il manque du carburant. Peut-être qu'il sera utile plus tard.")
     elif event == "Un groupe de survivants amicaux vous invite à rejoindre leur camp.":
@@ -300,6 +321,41 @@ def random_event():
         resources["food"] += food_found
         resources["water"] += water_found
         narrate(f"Le trésor contient :\n- {wood_found} bois\n- {food_found} nourriture\n- {water_found} eau.")
+    elif event == "Un scientifique fou vous propose une potion mystérieuse.":
+        narrate("Le scientifique vous tend une potion étrange. Voulez-vous la boire ? (o/n)")
+        choice = input("> ").lower()
+        if choice == "o":
+            effect = random.choice(["positive", "negative"])
+            if effect == "positive":
+                health_gain = random.randint(10, 20)
+                health += health_gain
+                narrate(f"La potion vous revitalise ! Vous gagnez {health_gain} points de santé.")
+            else:
+                health_loss = random.randint(10, 20)
+                health -= health_loss
+                narrate(f"La potion était toxique ! Vous perdez {health_loss} points de santé.")
+        else:
+            narrate("Vous refusez la potion et partez prudemment.")
+    elif event == "Vous trouvez une base militaire abandonnée avec des équipements avancés.":
+        narrate("Vous explorez la base militaire et trouvez des équipements utiles.")
+        wood_found = random.randint(20, 30)
+        food_found = random.randint(10, 20)
+        water_found = random.randint(10, 20)
+        resources["wood"] += wood_found
+        resources["food"] += food_found
+        resources["water"] += water_found
+        narrate(f"La base contient :\n- {wood_found} bois\n- {food_found} nourriture\n- {water_found} eau.")
+    elif event == "Un hélicoptère survole la zone, mais ne vous remarque pas.":
+        narrate("Un hélicoptère passe au-dessus de vous. Peut-être qu'il reviendra un jour...")
+    elif event == "Vous découvrez un laboratoire secret contenant des technologies anciennes.":
+        narrate("Vous explorez le laboratoire et trouvez des ressources rares.")
+        wood_found = random.randint(25, 35)
+        food_found = random.randint(15, 25)
+        water_found = random.randint(15, 25)
+        resources["wood"] += wood_found
+        resources["food"] += food_found
+        resources["water"] += water_found
+        narrate(f"Le laboratoire contient :\n- {wood_found} bois\n- {food_found} nourriture\n- {water_found} eau.")
 
 # Boucle principale du jeu
 def main():
