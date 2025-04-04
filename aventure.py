@@ -231,9 +231,22 @@ def random_event():
         "Un groupe de pillards attaque votre abri.",
         "Vous trouvez une cachette abandonnée avec des ressources.",
         "Un étranger vous propose de l'aide en échange de nourriture.",
-        "Une tempête détruit une partie de votre abri."
+        "Une tempête détruit une partie de votre abri.",
+        "Un animal sauvage attaque votre camp.",
+        "Vous découvrez un ancien bunker rempli de provisions.",
     ]
-    event = random.choice(events)
+    rare_events = [
+        "Vous trouvez un véhicule fonctionnel, mais il nécessite du carburant.",
+        "Un groupe de survivants amicaux vous invite à rejoindre leur camp.",
+        "Vous découvrez un trésor caché contenant des ressources précieuses.",
+    ]
+
+    # Probabilité d'événements rares (10%)
+    if random.random() < 0.1:
+        event = random.choice(rare_events)
+    else:
+        event = random.choice(events)
+
     narrate(f"\nÉvénement : {event}")
 
     global health
@@ -260,6 +273,33 @@ def random_event():
     elif event == "Une tempête détruit une partie de votre abri.":
         resources["wood"] = max(0, resources["wood"] - 5)
         narrate("La tempête emporte 5 bois de votre abri.")
+    elif event == "Un animal sauvage attaque votre camp.":
+        health_loss = random.randint(10, 20)
+        health -= health_loss
+        narrate(f"Un animal sauvage vous attaque, causant {health_loss} points de dégâts.")
+    elif event == "Vous découvrez un ancien bunker rempli de provisions.":
+        wood_found = random.randint(10, 15)
+        food_found = random.randint(5, 10)
+        water_found = random.randint(5, 10)
+        resources["wood"] += wood_found
+        resources["food"] += food_found
+        resources["water"] += water_found
+        narrate(f"Le bunker contient :\n- {wood_found} bois\n- {food_found} nourriture\n- {water_found} eau.")
+    elif event == "Vous trouvez un véhicule fonctionnel, mais il nécessite du carburant.":
+        narrate("Vous trouvez un véhicule fonctionnel, mais il manque du carburant. Peut-être qu'il sera utile plus tard.")
+    elif event == "Un groupe de survivants amicaux vous invite à rejoindre leur camp.":
+        narrate("Un groupe de survivants amicaux vous invite à leur camp. Vous gagnez un abri temporaire et des ressources.")
+        health += 10
+        resources["food"] += 5
+        resources["water"] += 5
+    elif event == "Vous découvrez un trésor caché contenant des ressources précieuses.":
+        wood_found = random.randint(15, 20)
+        food_found = random.randint(10, 15)
+        water_found = random.randint(10, 15)
+        resources["wood"] += wood_found
+        resources["food"] += food_found
+        resources["water"] += water_found
+        narrate(f"Le trésor contient :\n- {wood_found} bois\n- {food_found} nourriture\n- {water_found} eau.")
 
 # Boucle principale du jeu
 def main():
